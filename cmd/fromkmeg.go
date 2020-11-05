@@ -4,8 +4,12 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"image"
+	"image/jpeg"
 	"image/png"
+	"io"
 	"os"
+	"path/filepath"
 
 	ew "github.com/pkg/errors"
 	"github.com/rameshputalapattu/kmeg"
@@ -53,6 +57,21 @@ func (cmd *FromkmegCommand) Run(ctx context.Context, args []string) error {
 
 }
 
+func writeImage(img *image.RGBA, w io.Writer, extn string) error {
+
+	switch extn {
+	case "png":
+		err := png.Encode(w, img)
+		return err
+	case ".jpg", ".JPEG", ".jpeg", ".JPG":
+		err := jpeg.Encode(w, img, &jpeg.Options{Quality: 100})
+		return err
+	default:
+		return errors.New("not a valid extension")
+	}
+
+}
+
 func decompress(decompName string, reconstName string) error {
 
 	r, err := os.Open(decompName)
@@ -77,8 +96,9 @@ func decompress(decompName string, reconstName string) error {
 	rgb := kmeg.Inflate(kmegImg)
 
 	rgba := kmeg.ConvertToRGBA(rgb)
+	ext := filepath.Ext(reconstName)
 
-	err = png.Encode(w, rgba)
+	err = writeImage(rgba, w, ext)
 
 	if err != nil {
 		return ew.Wrap(err, "encoding to png format failed")

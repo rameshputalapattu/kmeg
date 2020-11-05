@@ -154,7 +154,7 @@ func (km *KMeans) Cluster() error {
 
 	}
 
-	fmt.Fprintf(km.Output, "training finished in iterations:%d\n", iter+1)
+	fmt.Fprintf(km.Output, "clustering finished in iterations:%d\n", iter+1)
 	return nil
 
 }
