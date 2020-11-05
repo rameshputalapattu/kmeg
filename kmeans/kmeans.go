@@ -90,7 +90,7 @@ func (km *KMeans) Cluster() error {
 	clusters := len(km.Centroids)
 	features := len(km.trainingSet[0])
 
-	fmt.Fprintf(km.Output, "Training:\n\tModel: K-Means Classification\n\tTraining Examples: %v\n\tFeatures: %v\n\tClasses: %v\n...\n\n",
+	fmt.Fprintf(km.Output, "Clustering:\n\tModel: K-Means Classification\n\tNumber of Samples: %v\n\tFeatures: %v\n\tClasses: %v\n...\n\n",
 		examples,
 		features,
 		clusters)
