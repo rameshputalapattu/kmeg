@@ -60,7 +60,7 @@ func (cmd *FromkmegCommand) Run(ctx context.Context, args []string) error {
 func writeImage(img *image.RGBA, w io.Writer, extn string) error {
 
 	switch extn {
-	case "png":
+	case ".png":
 		err := png.Encode(w, img)
 		return err
 	case ".jpg", ".JPEG", ".jpeg", ".JPG":

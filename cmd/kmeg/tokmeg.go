@@ -65,7 +65,7 @@ func (cmd *TokmegCommand) Run(ctx context.Context, args []string) error {
 func readImage(r io.Reader, extn string) (image.Image, error) {
 
 	switch extn {
-	case "png":
+	case ".png":
 		img, err := png.Decode(r)
 		return img, err
 	case ".jpg", ".JPEG", ".jpeg", ".JPG":
