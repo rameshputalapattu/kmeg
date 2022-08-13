@@ -177,19 +177,6 @@ func Decode(r io.Reader) (*Kmeg, error) {
 
 	labels := make([]uint8, int(dx)*int(dy))
 
-	/*for idx := range labels {
-		var label uint8
-
-		err = binary.Read(gzr, binary.BigEndian, &label)
-
-		if err != nil {
-
-			return nil, err
-		}
-		labels[idx] = label
-
-	}*/
-
 	err = binary.Read(gzr, binary.BigEndian, labels)
 
 	if err != nil {
