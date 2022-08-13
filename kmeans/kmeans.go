@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//KMeans structure for book keeping the KMeans computation
+// KMeans structure for book keeping the KMeans computation
 type KMeans struct {
 	maxIterations int
 	trainingSet   [][]float64
@@ -19,19 +19,19 @@ type KMeans struct {
 
 const tol = 5
 
-//NewKMeans create a KMeans object to store the result of KMeans clustering
+// NewKMeans create a KMeans object to store the result of KMeans clustering
 func NewKMeans(k, maxIterations int, trainingSet [][]float64) *KMeans {
 
 	// start all guesses with the zero vector.
 	// they will be changed during learning
 	var guesses []int
 	guesses = make([]int, len(trainingSet))
-	features := len(trainingSet[0])
+	numFeatures := len(trainingSet[0])
 
 	rand.Seed(time.Now().UTC().Unix())
 	centroids := make([][]float64, k)
 	for i := range centroids {
-		centroids[i] = make([]float64, features)
+		centroids[i] = make([]float64, numFeatures)
 		copy(centroids[i], trainingSet[rand.Intn(len(trainingSet))])
 
 	}
@@ -48,7 +48,7 @@ func NewKMeans(k, maxIterations int, trainingSet [][]float64) *KMeans {
 
 }
 
-//a function to compute the distance between the centroids
+// a function to compute the distance between the centroids
 func diff(u, v []float64) float64 {
 	sum := 0.0
 	for i := range u {
@@ -57,8 +57,8 @@ func diff(u, v []float64) float64 {
 	return sum
 }
 
-//compute the total distance between previous iteration's cluster centroids
-//and current iteration's cluster centroids
+// compute the total distance between previous iteration's cluster centroids
+// and current iteration's cluster centroids
 func shift(prevcenters, newcenteres [][]float64) float64 {
 
 	var totaldiff float64
@@ -71,12 +71,12 @@ func shift(prevcenters, newcenteres [][]float64) float64 {
 	return totaldiff
 }
 
-//Labels : Return the cluster labels
+// Labels : Return the cluster labels
 func (km *KMeans) Labels() []int {
 	return km.labels
 }
 
-//Cluster Performs KMeans clustering
+// Cluster Performs KMeans clustering
 func (km *KMeans) Cluster() error {
 
 	if len(km.trainingSet) == 0 {
@@ -86,29 +86,29 @@ func (km *KMeans) Cluster() error {
 
 	}
 
-	examples := len(km.trainingSet)
-	clusters := len(km.Centroids)
-	features := len(km.trainingSet[0])
+	numSamples := len(km.trainingSet)
+	numClusters := len(km.Centroids)
+	numFeatures := len(km.trainingSet[0])
 
-	fmt.Fprintf(km.Output, "Clustering:\n\tModel: K-Means Classification\n\tNumber of Samples: %v\n\tFeatures: %v\n\tClasses: %v\n...\n\n",
-		examples,
-		features,
-		clusters)
+	fmt.Fprintf(km.Output, "Clustering:\n\tModel: K-Means Classification\n\tNumber of Samples: %v\n\tnumFeatures: %v\n\tClasses: %v\n...\n\n",
+		numSamples,
+		numFeatures,
+		numClusters)
 
 	iter := 0
 
 	for ; iter < km.maxIterations; iter++ {
-		classCount := make([]int, clusters)
-		classTotal := make([][]float64, clusters)
+		classCount := make([]int, numClusters)
+		classTotal := make([][]float64, numClusters)
 
 		for idx := range classTotal {
-			classTotal[idx] = make([]float64, features)
+			classTotal[idx] = make([]float64, numFeatures)
 		}
 
 		for i, x := range km.trainingSet {
 			km.labels[i] = 0
 			minDiff := diff(x, km.Centroids[0])
-			for j := 1; j < clusters; j++ {
+			for j := 1; j < numClusters; j++ {
 				dist := diff(x, km.Centroids[j])
 				if dist < minDiff {
 					minDiff = dist
@@ -123,9 +123,9 @@ func (km *KMeans) Cluster() error {
 			}
 		}
 
-		prevcenters := make([][]float64, clusters)
+		prevcenters := make([][]float64, numClusters)
 		for i := range prevcenters {
-			featurevec := make([]float64, features)
+			featurevec := make([]float64, numFeatures)
 			copy(featurevec, km.Centroids[i])
 			prevcenters[i] = featurevec
 		}
@@ -133,7 +133,7 @@ func (km *KMeans) Cluster() error {
 		for j := range km.Centroids {
 			if classCount[j] == 0 {
 				fmt.Fprintf(km.Output, "Encoutered zero count for cluster=%d\n", j)
-				copy(km.Centroids[j], km.trainingSet[rand.Intn(examples)])
+				copy(km.Centroids[j], km.trainingSet[rand.Intn(numSamples)])
 				continue
 			}
 
