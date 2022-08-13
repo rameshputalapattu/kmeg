@@ -8,7 +8,7 @@ import (
 	"github.com/rameshputalapattu/kmeg/kmeans"
 )
 
-//Kmeg Struct to hold the Kmeg information
+// Kmeg Struct to hold the Kmeg information
 type Kmeg struct {
 	Quantlevels [][]uint8
 	Labels      []int
@@ -16,8 +16,8 @@ type Kmeg struct {
 	Dy          int
 }
 
-//convert the data type of cluster centroids into uint8
-func makeCenters(centroids [][]float64) [][]uint8 {
+// convert the data type of cluster centroids into uint8
+func makeCenters(centroids [][]float32) [][]uint8 {
 
 	quantLevels := len(centroids)
 
@@ -36,15 +36,15 @@ func makeCenters(centroids [][]float64) [][]uint8 {
 
 }
 
-//MakeTrainingSet create a training set (samples) from the image pixel array
-func MakeTrainingSet(data [][]uint8) [][]float64 {
+// MakeTrainingSet create a training set (samples) from the image pixel array
+func MakeTrainingSet(data [][]uint8) [][]float32 {
 
-	trainingSet := make([][]float64, len(data))
+	trainingSet := make([][]float32, len(data))
 
 	for idx := range trainingSet {
-		var features []float64
+		var features []float32
 		for _, feature := range data[idx] {
-			features = append(features, float64(feature))
+			features = append(features, float32(feature))
 		}
 
 		trainingSet[idx] = features
@@ -55,8 +55,8 @@ func MakeTrainingSet(data [][]uint8) [][]float64 {
 
 }
 
-//Deflate Take in the kmeans object (Which has image information as the training samples)
-//and return Kmeg representation
+// Deflate Take in the kmeans object (Which has image information as the training samples)
+// and return Kmeg representation
 func Deflate(km *kmeans.KMeans, dx int) (*Kmeg, error) {
 
 	err := km.Cluster()
@@ -76,7 +76,7 @@ func Deflate(km *kmeans.KMeans, dx int) (*Kmeg, error) {
 
 }
 
-//Inflate returns RGBImage representation from the kmeg representation
+// Inflate returns RGBImage representation from the kmeg representation
 func Inflate(kmeg *Kmeg) *RGBImage {
 
 	dx := kmeg.Dx
@@ -100,7 +100,7 @@ func Inflate(kmeg *Kmeg) *RGBImage {
 
 }
 
-//Encode : Serialize kmeg representation into kmeg binary format
+// Encode : Serialize kmeg representation into kmeg binary format
 func Encode(w io.Writer, kmg *Kmeg) error {
 
 	gzw := gzip.NewWriter(w)
@@ -148,7 +148,7 @@ func Encode(w io.Writer, kmg *Kmeg) error {
 
 }
 
-//Decode : Deserialize the kmeg binary format to in-memory Kmeg structure
+// Decode : Deserialize the kmeg binary format to in-memory Kmeg structure
 func Decode(r io.Reader) (*Kmeg, error) {
 	var dx int64
 
@@ -176,19 +176,6 @@ func Decode(r io.Reader) (*Kmeg, error) {
 	}
 
 	labels := make([]uint8, int(dx)*int(dy))
-
-	/*for idx := range labels {
-		var label uint8
-
-		err = binary.Read(gzr, binary.BigEndian, &label)
-
-		if err != nil {
-
-			return nil, err
-		}
-		labels[idx] = label
-
-	}*/
 
 	err = binary.Read(gzr, binary.BigEndian, labels)
 
