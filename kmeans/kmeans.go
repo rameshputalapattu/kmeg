@@ -24,8 +24,7 @@ func NewKMeans(k, maxIterations int, trainingSet [][]float64) *KMeans {
 
 	// start all guesses with the zero vector.
 	// they will be changed during learning
-	var guesses []int
-	guesses = make([]int, len(trainingSet))
+	guesses := make([]int, len(trainingSet))
 	numFeatures := len(trainingSet[0])
 
 	rand.Seed(time.Now().UTC().Unix())
@@ -96,13 +95,25 @@ func (km *KMeans) Cluster() error {
 		numClusters)
 
 	iter := 0
+	classCount := make([]int, numClusters)
+	classTotal := make([][]float64, numClusters)
+
+	for idx := range classTotal {
+		classTotal[idx] = make([]float64, numFeatures)
+	}
+
+	prevcenters := make([][]float64, numClusters)
+
+	for idx := range prevcenters {
+		prevcenters[idx] = make([]float64, numFeatures)
+	}
 
 	for ; iter < km.maxIterations; iter++ {
-		classCount := make([]int, numClusters)
-		classTotal := make([][]float64, numClusters)
 
 		for idx := range classTotal {
-			classTotal[idx] = make([]float64, numFeatures)
+			for jdx := range classTotal[idx] {
+				classTotal[idx][jdx] = 0.0
+			}
 		}
 
 		for i, x := range km.trainingSet {
@@ -123,11 +134,10 @@ func (km *KMeans) Cluster() error {
 			}
 		}
 
-		prevcenters := make([][]float64, numClusters)
 		for i := range prevcenters {
-			featurevec := make([]float64, numFeatures)
-			copy(featurevec, km.Centroids[i])
-			prevcenters[i] = featurevec
+
+			copy(prevcenters[i], km.Centroids[i])
+
 		}
 
 		for j := range km.Centroids {
