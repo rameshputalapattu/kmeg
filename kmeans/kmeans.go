@@ -111,6 +111,7 @@ func (km *KMeans) Cluster() error {
 	for ; iter < km.maxIterations; iter++ {
 
 		for idx := range classTotal {
+			classCount[idx] = 0
 			for jdx := range classTotal[idx] {
 				classTotal[idx][jdx] = 0.0
 			}
@@ -148,7 +149,9 @@ func (km *KMeans) Cluster() error {
 			}
 
 			for l := range km.Centroids[j] {
+
 				km.Centroids[j][l] = classTotal[j][l] / float64(classCount[j])
+
 			}
 
 		}
